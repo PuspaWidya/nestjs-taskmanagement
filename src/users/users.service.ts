@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { hashingPass } from 'src/common/hashing';
 import { Repository } from 'typeorm';
 import { User } from '../entity/user.entity';
 import { UserDto } from './dto/create.dto';
+
+
 
 @Injectable()
 export class UsersService {
@@ -16,8 +19,14 @@ export class UsersService {
   }
 
   async create(createDto: UserDto) {
-    const data = await this.userRepository.create(createDto);
+    let {password, ...rest } = createDto
+    let hashPassword = await hashingPass(password)
+    let newBody = {
+      password : hashPassword,
+      ...rest
+    }
+    const data = await this.userRepository.create(newBody);
     await this.userRepository.save(data);
-    return data;
+    return rest;
   }
 }

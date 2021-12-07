@@ -9,6 +9,7 @@ import {
 import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
 import { LocalAuthGuard } from './auth/local-auth.guard';
+import { Public } from './auth/public';
 
 @Controller()
 export class AppController {
@@ -22,9 +23,10 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @UseGuards(LocalAuthGuard)
+  // @UseGuards(LocalAuthGuard)
+  @Public()
   @Post('login')
   async login(@Request() req) {
-    return this.authService.login(req.user);
+    return this.authService.login(req.body);
   }
 }
