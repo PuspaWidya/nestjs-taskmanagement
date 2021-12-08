@@ -1,9 +1,16 @@
 import { IsNotEmpty } from 'class-validator';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Task } from './task.entity';
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn()
+export class User extends BaseEntity {
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
   @Column()
@@ -17,4 +24,7 @@ export class User {
   @Column()
   @IsNotEmpty()
   password: string;
+
+  @OneToMany((type) => Task, (task) => task.user, { eager: true })
+  tasks: Task[];
 }

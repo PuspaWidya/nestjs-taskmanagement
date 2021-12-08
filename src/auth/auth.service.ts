@@ -13,8 +13,8 @@ export class AuthService {
 
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.userService.findOne(username);
-    const test = await comparePass(password, user.password)
-    if (user && user.password === password) {
+    const compare = await comparePass(password, user.password);
+    if (user && compare) {
       const { password, ...result } = user;
       return result;
     }
@@ -24,26 +24,19 @@ export class AuthService {
   /**
    * this function used to login
    * user get from jwt verify
-   * 
-   * @param user 
-   * @returns 
+   *
+   * @param user
+   * @returns
    */
 
-
   async login(user: any) {
-try{
-    const checkUser = await this.userService.findOne(user.username)
-    const compare = await comparePass(user.password, checkUser.password)
-    if(compare){
+    try {
       const payload = { username: user.username, userId: user.id };
       return {
         access_token: this.jwtService.sign(payload),
       };
+    } catch (err) {
+      throw new FilterException(err);
     }
-
-  }
-  catch(err){
-    throw new FilterException(err)
-  }
   }
 }

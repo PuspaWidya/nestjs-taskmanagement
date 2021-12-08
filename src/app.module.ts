@@ -16,9 +16,9 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
     TasksModule,
     AuthModule,
     UsersModule,
-    // ConfigModule.forRoot({
-    //   isGlobal: true,
-    // }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
   ],
   controllers: [AppController],
   providers: [

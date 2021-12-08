@@ -15,9 +15,12 @@ export class UsersService {
   ) {}
 
   async findOne(username: string) {
-    return this.userRepository.findOne({ username });
+    let data = await this.userRepository.findOne({username})
+
+   return data
   }
 
+  
   async create(createDto: UserDto) {
     let {password, ...rest } = createDto
     let hashPassword = await hashingPass(password)
