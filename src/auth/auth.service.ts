@@ -24,6 +24,7 @@ export class AuthService {
   /**
    * this function used to login
    * user get from jwt verify
+   * connected to jwt strategy validate
    *
    * @param user
    * @returns
