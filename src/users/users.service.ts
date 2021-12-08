@@ -5,8 +5,6 @@ import { Repository } from 'typeorm';
 import { User } from '../entity/user.entity';
 import { UserDto } from './dto/create.dto';
 
-
-
 @Injectable()
 export class UsersService {
   constructor(
@@ -15,20 +13,17 @@ export class UsersService {
   ) {}
 
   async findOne(username: string) {
-    let data = await this.userRepository.findOne({username})
-
-   return data
+    return this.userRepository.findOne({ username });
   }
 
-  
   async create(createDto: UserDto) {
-    let {password, ...rest } = createDto
-    let hashPassword = await hashingPass(password)
+    let { password, ...rest } = createDto;
+    let hashPassword = await hashingPass(password);
     let newBody = {
-      password : hashPassword,
-      ...rest
-    }
-    const data = await this.userRepository.create(newBody);
+      password: hashPassword,
+      ...rest,
+    };
+    const data = this.userRepository.create(newBody);
     await this.userRepository.save(data);
     return rest;
   }

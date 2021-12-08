@@ -1,15 +1,12 @@
 import {
-  BadGatewayException,
   BadRequestException,
-  HttpException,
-  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilterException } from 'src/common/filterException';
-import { HttpExceptionFilter } from 'src/common/HttpExceptionFilter.';
 import { Task } from 'src/entity/task.entity';
+import { User } from 'src/entity/user.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { TaskStatus } from './task-status.enum';
@@ -41,12 +38,18 @@ export class TasksService {
     }
   }
 
-  async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
+  async createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
     try {
       if (!createTaskDto.status) {
         createTaskDto.status = TaskStatus.DONE;
       }
-      const task = this.taskRepository.create(createTaskDto);
+
+      // const task = this.taskRepository.create(createTaskDto);
+      const task = new Task();
+      task.title = createTaskDto.title;
+      task.description = createTaskDto.description;
+      task.status = createTaskDto.status;
+      task.user = user;
       return task.save();
     } catch (err) {
       throw new FilterException(err);

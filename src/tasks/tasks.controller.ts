@@ -7,17 +7,13 @@ import {
   Delete,
   Patch,
   Query,
-  UsePipes,
-  ValidationPipe,
   ParseIntPipe,
-  UseFilters,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-// import { Task, TaskStatus } from './task-status.enum';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
-import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
 import { Task } from 'src/entity/task.entity';
 import { TaskStatus } from './task-status.enum';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
@@ -37,9 +33,11 @@ export class TasksController {
   }
 
   @Post()
-  @UsePipes(ValidationPipe)
-  createTask(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.tasksService.createTask(createTaskDto);
+  createTask(
+    @Body() createTaskDto: CreateTaskDto,
+    @Request() req, // give entire object of entity
+  ): Promise<Task> {
+    return this.tasksService.createTask(createTaskDto, req.user);
   }
 
   @Delete('/:id')
