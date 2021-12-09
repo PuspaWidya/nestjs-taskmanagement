@@ -5,9 +5,11 @@ import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 // will add logic that available in any module
 @EntityRepository(Task)
 export class TaskRepository extends Repository<Task> {
-  async getTask(filterDto: GetTasksFilterDto) {
+  async getTask(filterDto: GetTasksFilterDto, user: any) {
     const { status, search } = filterDto;
     const query = this.createQueryBuilder('task');
+    const { id } = user;
+    query.andWhere(`task.userId = :id`, { id });
     if (status) {
       query.andWhere(`task.status = :status`, { status });
     }

@@ -10,39 +10,42 @@ import {
   ParseIntPipe,
   UseGuards,
   Request,
+  Req,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { Task } from 'src/entity/task.entity';
 import { TaskStatus } from './task-status.enum';
-import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private tasksService: TasksService) {}
-  @UseGuards(LocalAuthGuard)
+
   @Get()
-  getTasks(@Query() filterDto: GetTasksFilterDto) {
-    return this.tasksService.getAllTask(filterDto);
+  getTasks(@Query() filterDto: GetTasksFilterDto, @Req() req) {
+    return this.tasksService.getAllTask(filterDto, req.user);
   }
 
   @Get('/:id')
-  getTaskById(@Param('id', ParseIntPipe) id: number): Promise<Task> {
-    return this.tasksService.getTaskById(id);
+  getTaskById(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req,
+  ): Promise<Task> {
+    return this.tasksService.getTaskById(id, req.user);
   }
 
   @Post()
   createTask(
     @Body() createTaskDto: CreateTaskDto,
-    @Request() req, // give entire object of entity
+    @Request() req,
   ): Promise<Task> {
     return this.tasksService.createTask(createTaskDto, req.user);
   }
 
   @Delete('/:id')
-  deleteTask(@Param('id', ParseIntPipe) id: number): Promise<any> {
-    return this.tasksService.deleteTask(id);
+  deleteTask(@Param('id', ParseIntPipe) id: number, @Req() req): Promise<any> {
+    return this.tasksService.deleteTask(id, req.user);
   }
 
   @Patch('/:id/status')
